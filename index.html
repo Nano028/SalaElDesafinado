@@ -1,0 +1,284 @@
+<!doctype html>
+
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>El Desafinado | Sala de Ensayo</title>
+
+    <meta
+      name="description"
+      content="Sala de ensayo profesional en Montevideo. Equipamiento completo, batería incluida (no incluye platos) y reservas online."
+    />
+
+    <link rel="stylesheet" href="./styles/style.css" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "MusicVenue",
+        "name": "El Desafinado",
+        "description": "Sala de ensayo profesional en Montevideo",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Montevideo",
+          "addressCountry": "UY"
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <header>
+      <nav class="navbar">
+        <div class="logo">EL DESAFINADO</div>
+
+        <ul class="nav-links">
+          <li>
+            <a href="#hero"> Inicio </a>
+          </li>
+
+          <li>
+            <a href="#availability"> Disponibilidad </a>
+          </li>
+
+          <li>
+            <a href="#services"> Servicios </a>
+          </li>
+
+          <li>
+            <a href="#gallery"> Bandas </a>
+          </li>
+
+          <li>
+            <a href="#faq"> Preguntas </a>
+          </li>
+          <li>
+            <a href="https://wa.me/59800000000" target="_blank" class="btn-primary"> Reservar Ahora </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <!-- PARALLAX HERO -->
+
+      <section id="parallax-hero">
+        <div class="parallax-overlay"></div>
+
+        <div class="parallax-content">
+          <span class="parallax-tag"> Sala de Ensayo Profesional </span>
+
+          <h1>EL DESAFINADO</h1>
+
+          <p>Donde las bandas suenan fuerte.</p>
+
+          <a href="#hero" class="parallax-scroll"> ↓ </a>
+        </div>
+      </section>
+
+      <section id="hero" class="secondary-hero">
+        <div class="container hero-grid">
+          <div class="hero-content">
+            <span class="hero-tag"> Sala de Ensayo Profesional </span>
+
+            <h1>Sala de ensayo profesional</h1>
+
+            <p>
+              Equipamiento completo, batería incluida (no incluye platos), amplificadores, sala climatizada y reservas
+              rápidas.
+            </p>
+
+            <div class="hero-actions">
+              <a href="https://wa.me/59800000000" target="_blank" class="btn-primary"> Reservar Ahora </a>
+
+              <a href="#availability" class="btn-secondary"> Ver Disponibilidad </a>
+            </div>
+          </div>
+
+          <div class="hero-image">
+            <img src="./multimedia/sala-main.avif" alt="Sala de ensayo profesional" />
+          </div>
+        </div>
+      </section>
+
+      <!-- BENEFITS -->
+
+      <section id="benefits">
+        <div class="container benefits-grid">
+          <div class="benefit-card">
+            <h3>Sonido Profesional</h3>
+
+            <p>Equipamiento listo para tocar.</p>
+          </div>
+
+          <div class="benefit-card">
+            <h3>Batería Incluida</h3>
+
+            <p>Cuerpos armados y ajustados.</p>
+          </div>
+
+          <div class="benefit-card">
+            <h3>Climatización</h3>
+
+            <p>Comodidad durante todo el año.</p>
+          </div>
+
+          <div class="benefit-card">
+            <h3>Frigobar</h3>
+
+            <p>Refrescos y bebidas disponibles.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- AVAILABILITY -->
+      <section id="availability">
+        <div class="container">
+          <div class="section-header">
+            <h2>Disponibilidad</h2>
+
+            <p>Consultá horarios disponibles para reservar.</p>
+          </div>
+
+          <div class="availability-wrapper">
+            <div class="availability-top">
+              <div id="calendar-days"></div>
+            </div>
+
+            <div id="schedule"></div>
+            <div id="error" style="display: none; color: #c00; margin-top: 1rem"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SERVICES -->
+      <section id="services">
+        <div class="container">
+          <div class="section-header">
+            <h2>Servicios</h2>
+          </div>
+
+          <div class="services-grid">
+            <article class="service-card">
+              <h3>Ensayos por Hora</h3>
+
+              <p>Reservas flexibles para bandas y músicos.</p>
+            </article>
+
+            <article class="service-card">
+              <h3>Grabación de Maquetas</h3>
+
+              <p>Registrá tus ideas con calidad profesional.</p>
+            </article>
+
+            <article class="service-card">
+              <h3>Producción Musical</h3>
+
+              <p>Mezcla y producción de proyectos musicales.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- BAND CARD -->
+      <section class="container">
+        <div class="section-header">
+          <h2>Bandas de la casa</h2>
+        </div>
+        <div class="bands-grid">
+          <!-- cards -->
+          <a href="https://dockr.bio/knockboard" target="_blank" class="band-card">
+            <div class="band-image">
+              <img src="./multimedia/cards/knockboard.png" alt="Knockboard" />
+            </div>
+
+            <div class="band-overlay">
+              <h3>Knockboard</h3>
+            </div>
+          </a>
+
+          <a href="https://dockr.bio/knockboard" target="_blank" class="band-card">
+            <div class="band-image">
+              <img src="./multimedia/cards/daysofthephoenix.jpg" alt="Days of the Phoenix" />
+            </div>
+
+            <div class="band-overlay">
+              <h3>Days of the Phoenix</h3>
+            </div>
+          </a>
+
+          <a href="https://dockr.bio/knockboard" target="_blank" class="band-card">
+            <div class="band-image">
+              <img src="./multimedia/cards/knockboard.png" alt="Knockboard" />
+            </div>
+
+            <div class="band-overlay">
+              <h3>Knockboard</h3>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+
+      <section id="faq">
+        <div class="container">
+          <div class="section-header">
+            <h2>Preguntas Frecuentes</h2>
+          </div>
+
+          <div class="faq-container">
+            <div class="faq-item">
+              <button class="faq-question">¿Incluye batería?</button>
+
+              <div class="faq-answer">Sí, la batería está incluida (sin platos).</div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question">¿Puedo reservar por WhatsApp?</button>
+
+              <div class="faq-answer">Sí, las reservas se hacen por WhatsApp.</div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question">¿Hay estacionamiento?</button>
+
+              <div class="faq-answer">Hay estacionamiento disponible en la zona.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+
+      <section id="cta">
+        <div class="container">
+          <h2>¿Listo para tu próximo ensayo?</h2>
+
+          <p>Reservá ahora y asegurá tu horario.</p>
+
+          <a href="https://wa.me/59800000000" target="_blank" class="btn-primary"> Reservar por WhatsApp </a>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer>
+      <div class="container">
+        <div class="footer-brand">
+          <h3>El Desafinado</h3>
+
+          <p>Sala de ensayo profesional.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="./script/script.js"></script>
+  </body>
+</html>

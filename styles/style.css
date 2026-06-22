@@ -1,0 +1,842 @@
+/* ==========================
+   RESET
+========================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, Arial, sans-serif;
+  line-height: 1.6;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ==========================
+   VARIABLES
+========================== */
+
+:root {
+  --bg: #080808;
+  --surface: #111111;
+  --surface-dark: #181818;
+  --card: #181818;
+  --text: #ffffff;
+  --text-muted: #9ca3af;
+  --text-soft: rgba(255, 255, 255, 0.8);
+  --primary: #ff6b35;
+  --primary-hover: #ff8357;
+  --accent-border: rgba(255, 107, 53, 0.4);
+  --accent-border-hover: rgba(255, 107, 53, 0.5);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-soft: rgba(255, 255, 255, 0.05);
+  --border-light: rgba(255, 255, 255, 0.2);
+  --scrollbar: rgba(255, 255, 255, 0.15);
+  --success: #25d366;
+  --success-bg: #1d5f31;
+  --danger-bg: #7a1f1f;
+  --radius: 20px;
+  --container: 1280px;
+}
+
+/* ==========================
+   BASE / LAYOUT
+   (container, sections, typography)
+========================== */
+
+.container {
+  width: 90%;
+  max-width: var(--container);
+  margin: 0 auto;
+}
+
+section {
+  padding: 120px 0;
+}
+
+.section-header {
+  margin-bottom: 50px;
+}
+
+.section-header h2 {
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  margin-bottom: 12px;
+}
+
+.section-header p {
+  color: var(--text-muted);
+  max-width: 700px;
+}
+
+img {
+  width: 100%;
+  display: block;
+}
+
+/* ==========================
+   NAVBAR
+========================== */
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  backdrop-filter: blur(20px);
+  background: rgba(8, 8, 8, 0.7);
+  border-bottom: 1px solid transparent;
+  transition: 0.3s;
+}
+
+.navbar-scrolled {
+  border-color: var(--border);
+}
+
+.navbar {
+  width: 90%;
+  max-width: var(--container);
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.logo {
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.nav-links a {
+  color: var(--text);
+  transition: 0.3s;
+  position: relative;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--primary);
+}
+
+/* ==========================
+   HERO + PARALLAX
+========================== */
+
+#hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.hero-tag {
+  color: var(--primary);
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.hero-content h1 {
+  font-size: clamp(3rem, 7vw, 6rem);
+  line-height: 1;
+  margin-bottom: 24px;
+}
+
+.hero-content p {
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  max-width: 600px;
+  margin-bottom: 40px;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hero-image {
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.hero-image img {
+  height: 650px;
+  object-fit: cover;
+}
+
+#parallax-hero {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-image: url("../multimedia/sala-hero.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.parallax-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.75));
+}
+
+.parallax-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 20px;
+}
+
+.parallax-tag {
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 24px;
+}
+
+.parallax-content h1 {
+  font-size: clamp(4rem, 10vw, 9rem);
+  line-height: 0.9;
+  margin-bottom: 24px;
+  letter-spacing: 4px;
+}
+
+.parallax-content p {
+  font-size: 1.3rem;
+  color: var(--text-soft);
+  margin-bottom: 60px;
+}
+
+.parallax-scroll {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 1px solid var(--border-light);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  font-size: 2rem;
+  transition: 0.3s;
+  animation: floatArrow 2s infinite;
+}
+
+.parallax-scroll:hover {
+  transform: scale(1.1);
+  border-color: var(--primary);
+}
+
+/* ==========================
+   COMPONENTS
+   (benefits, availability, services, gallery, faq, bands)
+========================== */
+
+#benefits {
+  padding-top: 0;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.benefit-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 30px;
+  transition: 0.3s;
+}
+
+.benefit-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--accent-border);
+}
+
+.benefit-card h3 {
+  margin-bottom: 12px;
+}
+
+.benefit-card p {
+  color: var(--text-muted);
+}
+
+/* AVAILABILITY / CALENDAR */
+.availability-wrapper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 40px;
+}
+
+.availability-top {
+  margin-bottom: 40px;
+}
+
+#calendar-days {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+#calendar-days::-webkit-scrollbar {
+  height: 6px;
+}
+
+#calendar-days::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  border-radius: 999px;
+}
+
+.calendar-day {
+  min-width: 120px;
+  background: var(--surface-dark);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 18px;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text);
+}
+
+.calendar-day,
+.calendar-day * {
+  color: var(--text);
+}
+
+.calendar-day:hover {
+  border-color: var(--accent-border-hover);
+  transform: translateY(-3px);
+}
+
+.calendar-day.active {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.calendar-weekday {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  text-transform: capitalize;
+}
+
+.calendar-number {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.calendar-month {
+  font-size: 0.9rem;
+  opacity: 0.85;
+  text-transform: capitalize;
+}
+
+/* SCHEDULE */
+#schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.schedule-slot {
+  background: var(--surface-dark);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.3s;
+}
+
+.schedule-slot:hover {
+  border-color: var(--accent-border);
+}
+
+.slot-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.slot-time {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.slot-status {
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.slot-status.available {
+  background: var(--success-bg);
+}
+
+.slot-status.occupied {
+  background: var(--danger-bg);
+}
+
+.reserve-button {
+  background: var(--primary);
+  color: var(--text);
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  transition: 0.3s;
+}
+
+.reserve-button:hover {
+  background: var(--primary-hover);
+}
+
+/* primary CTA button used across the site */
+.btn-primary {
+  background: var(--primary);
+  color: var(--text);
+  padding: 16px 28px;
+  border-radius: 12px;
+  font-weight: 700;
+  transition: 0.3s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+/* secondary / outline button */
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 16px 28px;
+  border-radius: 12px;
+  font-weight: 700;
+  transition: 0.3s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-secondary:hover {
+  background: var(--border-soft);
+}
+
+.occupied-label {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* SERVICES */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.service-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 40px;
+  transition: 0.3s;
+}
+
+.service-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--accent-border);
+}
+
+.service-card h3 {
+  margin-bottom: 16px;
+  font-size: 1.4rem;
+}
+
+.service-card p {
+  color: var(--text-muted);
+}
+
+/* GALLERY */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.gallery-grid img {
+  border-radius: 20px;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  cursor: pointer;
+  transition: 0.4s;
+}
+
+.gallery-grid img:hover {
+  transform: scale(1.03);
+}
+
+/* FAQ */
+.faq-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.faq-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.faq-question {
+  width: 100%;
+  background: transparent;
+  color: var(--text);
+  border: none;
+  padding: 24px;
+  text-align: left;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: 0.3s;
+  color: var(--text-muted);
+  padding: 0 24px;
+}
+
+.faq-item.active .faq-answer {
+  max-height: 200px;
+  padding-bottom: 24px;
+}
+
+/* BANDS / BAND CARD */
+.band-card {
+  position: relative;
+  display: block;
+  height: 420px;
+  border-radius: 28px;
+  overflow: hidden;
+  cursor: pointer;
+  isolation: isolate;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition:
+    transform 0.45s ease,
+    border-color 0.45s ease,
+    box-shadow 0.45s ease;
+}
+
+.band-image {
+  width: 100%;
+  height: 100%;
+}
+
+.band-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.8s ease;
+}
+
+.band-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 32px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.15), transparent);
+  z-index: 2;
+}
+
+.band-overlay h3 {
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  color: var(--text);
+  font-weight: 800;
+  letter-spacing: 1px;
+  transform: translateY(10px);
+  opacity: 0.9;
+  transition:
+    transform 0.45s ease,
+    opacity 0.45s ease;
+}
+
+.band-card:hover {
+  transform: translateY(-10px) scale(1.015);
+  border-color: var(--accent-border);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+}
+
+.band-card:hover img {
+  transform: scale(1.08);
+}
+
+.band-card:hover h3 {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.bands-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* ==========================
+   CTA
+========================== */
+
+#cta {
+  text-align: center;
+}
+
+#cta .container {
+  background: linear-gradient(135deg, var(--surface-dark), var(--surface));
+  border: 1px solid var(--border);
+  border-radius: 40px;
+  padding: 80px;
+}
+
+#cta h2 {
+  font-size: clamp(2rem, 5vw, 4rem);
+  margin-bottom: 20px;
+}
+
+#cta p {
+  color: var(--text-muted);
+  margin-bottom: 40px;
+}
+
+/* ==========================
+   FOOTER
+========================== */
+
+footer {
+  padding: 60px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer-brand {
+  text-align: center;
+}
+
+.footer-brand h3 {
+  margin-bottom: 10px;
+}
+
+.footer-brand p {
+  color: var(--text-muted);
+}
+
+/* ==========================
+   LIGHTBOX
+========================== */
+
+#lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+  z-index: 9999;
+}
+
+#lightbox.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+#lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 20px;
+}
+
+#close-lightbox {
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  color: var(--text);
+  font-size: 3rem;
+  cursor: pointer;
+}
+
+/* ==========================
+   WHATSAPP FLOAT
+========================== */
+
+.whatsapp-float {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--success);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  z-index: 999;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  transition: 0.3s;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.1);
+}
+
+/* ==========================
+   ANIMATIONS
+========================== */
+
+.hidden-element {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: 1s;
+}
+
+.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes floatArrow {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* ==========================
+   RESPONSIVE (consolidated)
+   - breakpoints: 1100 / 900 / 768
+========================== */
+
+@media (max-width: 1100px) {
+  .hero-grid,
+  .benefits-grid,
+  .services-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .bands-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  /* general spacing adjustments */
+  section {
+    padding: 80px 0;
+  }
+
+  /* navbar */
+  .navbar {
+    flex-direction: column;
+    gap: 20px;
+    height: auto;
+    padding: 20px 0;
+  }
+  .nav-links {
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* grid reductions */
+  .hero-grid,
+  .benefits-grid,
+  .services-grid,
+  .gallery-grid {
+    grid-template-columns: 1fr;
+  }
+  .hero-image img {
+    height: 400px;
+  }
+
+  /* availability layout */
+  .schedule-slot {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  /* CTA padding */
+  #cta .container {
+    padding: 50px 30px;
+  }
+
+  /* parallax: disable fixed attachment on small screens */
+  #parallax-hero {
+    background-attachment: scroll;
+  }
+
+  /* band card height */
+  .band-card {
+    height: 320px;
+  }
+}
