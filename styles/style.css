@@ -195,17 +195,24 @@ header {
   object-fit: cover;
 }
 
-#parallax-hero {
+.parallax-section {
   position: relative;
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background-image: url("../multimedia/sala-hero.jpg");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
+}
+
+#parallax-hero {
+  background-image: url("../multimedia/sala-hero.jpg");
+}
+
+#second-parallax-hero {
+  background-image: url("../multimedia/sala.jpeg");
 }
 
 .parallax-overlay {
@@ -649,7 +656,7 @@ header {
 }
 
 #cta h2 {
-  font-size: clamp(2rem, 5vw, 4rem);
+  font-size: clamp(2rem, 2vw, 4rem);
   margin-bottom: 20px;
 }
 
