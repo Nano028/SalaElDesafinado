@@ -34,32 +34,41 @@
     <!-- NAVBAR -->
     <header>
       <nav class="navbar">
-        <div class="logo">EL DESAFINADO</div>
+        <div class="nav-container">
+          <img src="./multimedia/logos/logo.png" alt="Logo de El Desafinado" class="logo-image" />
+          <div class="logo">EL DESAFINADO</div>
 
-        <ul class="nav-links">
-          <li>
-            <a href="#hero"> Inicio </a>
-          </li>
+          <button type="button" class="nav-toggle" aria-label="Abrir menú">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
 
-          <li>
-            <a href="#availability"> Disponibilidad </a>
-          </li>
+          <ul class="nav-links">
+            <li>
+              <a href="#hero"> Inicio </a>
+            </li>
 
-          <li>
-            <a href="#services"> Servicios </a>
-          </li>
+            <li>
+              <a href="#availability"> Disponibilidad </a>
+            </li>
 
-          <li>
-            <a href="#gallery"> Bandas </a>
-          </li>
+            <li>
+              <a href="#services"> Servicios </a>
+            </li>
 
-          <li>
-            <a href="#faq"> Preguntas </a>
-          </li>
-          <li>
-            <a href="https://wa.me/59800000000" target="_blank" class="btn-primary"> Reservar Ahora </a>
-          </li>
-        </ul>
+            <li>
+              <a href="#gallery"> Bandas </a>
+            </li>
+
+            <li>
+              <a href="#faq"> Preguntas </a>
+            </li>
+            <li>
+              <a href="https://wa.me/59800000000" target="_blank"> Reservar Ahora </a>
+            </li>
+          </ul>
+        </div>
       </nav>
     </header>
 
@@ -258,35 +267,79 @@
             </div>
 
             <div class="faq-item">
+              <button class="faq-question">¿Cuánto cuesta la hora?</button>
+
+              <div class="faq-answer">Sala A $400 la hora; Sala B $600 la hora.</div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question">¿Existe cuponeras?</button>
+
+              <div class="faq-answer">Sí, tenemos cuponeras disponibles para nuestros clientes.</div>
+            </div>
+
+            <div class="faq-item">
               <button class="faq-question">¿Hay estacionamiento?</button>
 
               <div class="faq-answer">Hay estacionamiento disponible en la zona.</div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question">¿Qué omnibuses pasan por ahí?</button>
+
+              <div class="faq-answer">Desde zona oeste 145, 146 y 147; Desde zona este 180, 181 y 182.</div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- CTA -->
-
-      <section id="cta">
+      <section id="map">
         <div class="container">
-          <h2>¿Qué esperas para agendar tu próximo ensayo?</h2>
+          <div class="section-header">
+            <h2>Contacto</h2>
+          </div>
+          <section class="footer">
+            <iframe
+              class="footerMap"
+              src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d2188.518431077068!2d-55.93221363360834!3d-34.94474083515729!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses-419!2suy!4v1782567938392!5m2!1ses-419!2suy"
+              loading="lazy"
+              referrerpolicy="strict-origin-when-cross-origin"
+            ></iframe>
 
-          <p>Reservá ahora y asegurá tu horario.</p>
+            <div class="footerContent">
+              <p>Dirección: Av. Italia 1234, Montevideo, Uruguay</p>
 
-          <a href="https://wa.me/59800000000" target="_blank" class="btn-primary"> Reservar por WhatsApp </a>
+              <a href="https://instagram.com" target="_blank" class="btn-primary">
+                <img src="./multimedia/logos/ig.png" alt="Instagram" />
+              </a>
+              <a href="https://instagram.com" target="_blank" class="btn-primary">
+                <img src="./multimedia/logos/yt.png" alt="YouTube" />
+              </a>
+              <a href="https://facebook.com" target="_blank" class="btn-primary">
+                <img src="./multimedia/logos/fb.png" alt="Facebook" />
+              </a>
+              <a href="https://instagram.com" target="_blank" class="btn-primary">
+                <img src="./multimedia/logos/tik.png" alt="TikTok" />
+              </a>
+              <a href="https://instagram.com" target="_blank" class="btn-primary">
+                <img src="./multimedia/logos/email.png" alt="Email" />
+              </a>
+              <a href="https://instagram.com" target="_blank" class="btn-primary">
+                <img src="./multimedia/logos/tel.png" alt="Teléfono" />
+              </a>
+            </div>
+          </section>
         </div>
       </section>
     </main>
 
     <!-- FOOTER -->
-
     <footer>
       <div class="container">
         <div class="footer-brand">
           <h3>El Desafinado</h3>
-
           <p>Sala de ensayo.</p>
+          <h6 class="footerDeveloped">Desarrollado por Nano Web Design</h6>
         </div>
       </div>
     </footer>
@@ -296,11 +349,6 @@
 </html>
 
 <!-- 
-
 Logo
-Mapa
-Precios, Cuponeras, etc
-Sorteo de horas
 Especificaciones Técnicas
-
  -->

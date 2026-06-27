@@ -39,8 +39,34 @@ document.addEventListener("DOMContentLoaded", () => {
   scheduleContainer = document.getElementById("schedule");
   errorContainer = document.getElementById("error");
   attachFaqToggle();
+  attachNavToggle();
   cargarDisponibilidad();
 });
+
+/* =========================
+   NAV TOGGLE
+========================= */
+function attachNavToggle() {
+  const navbar = document.querySelector(".navbar");
+  const toggle = document.querySelector(".nav-toggle");
+  const links = document.querySelectorAll(".nav-links a");
+
+  if (!toggle || !navbar) return;
+
+  toggle.addEventListener("click", () => {
+    navbar.classList.toggle("nav-open");
+    toggle.classList.toggle("open");
+  });
+
+  links.forEach((link) => {
+    link.addEventListener("click", () => {
+      if (navbar.classList.contains("nav-open")) {
+        navbar.classList.remove("nav-open");
+        toggle.classList.remove("open");
+      }
+    });
+  });
+}
 
 /* =========================
    FAQ TOGGLE
