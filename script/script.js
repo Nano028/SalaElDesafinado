@@ -40,8 +40,45 @@ document.addEventListener("DOMContentLoaded", () => {
   errorContainer = document.getElementById("error");
   attachFaqToggle();
   attachNavToggle();
+  initParallax();
   cargarDisponibilidad();
 });
+
+function initParallax() {
+  const sections = document.querySelectorAll(".parallax-section");
+
+  if (!sections.length) return;
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  const isTouchDevice = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+  if (isTouchDevice) return;
+
+  let ticking = false;
+
+  const updateParallax = () => {
+    const scrollY = window.scrollY;
+
+    sections.forEach((section) => {
+      const sectionTop = section.offsetTop;
+      const offset = (scrollY - sectionTop) * 0.25;
+      section.style.backgroundPosition = `center calc(50% + ${offset}px)`;
+    });
+
+    ticking = false;
+  };
+
+  const requestParallaxUpdate = () => {
+    if (!ticking) {
+      window.requestAnimationFrame(updateParallax);
+      ticking = true;
+    }
+  };
+
+  updateParallax();
+  window.addEventListener("scroll", requestParallaxUpdate, { passive: true });
+  window.addEventListener("resize", updateParallax);
+}
 
 /* =========================
    NAV TOGGLE

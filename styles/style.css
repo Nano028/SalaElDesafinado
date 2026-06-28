@@ -1020,11 +1020,6 @@ footer {
     gap: 20px;
   }
 
-  /* parallax: disable fixed attachment on small screens */
-  #parallax-hero {
-    background-attachment: scroll;
-  }
-
   /* band card height */
   .band-card {
     height: 320px;
