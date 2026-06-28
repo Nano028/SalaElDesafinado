@@ -1,7 +1,7 @@
 const API_URL =
   "https://script.google.com/macros/s/AKfycbxTSj74nVu76qFYJl8Vr4_-XWtmlwWRDfXQhZl3_o1tuWdXpfiCbLeQkUjZi6MijgCVXg/exec";
 
-const WHATSAPP_NUMBER = "59800000000";
+const WHATSAPP_NUMBER = "598093767029";
 
 let disponibilidad = [];
 let selectedDay = null;

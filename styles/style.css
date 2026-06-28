@@ -52,8 +52,34 @@ a {
 }
 
 /* ==========================
-   BASE / LAYOUT
-   (container, sections, typography)
+  UTILITIES
+  (animations, helpers)
+========================== */
+
+.hidden-element {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 0.8s;
+}
+.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+@keyframes floatArrow {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* ==========================
+  BASE / LAYOUT
+  (container, sections, typography)
 ========================== */
 
 .container {
@@ -532,6 +558,58 @@ header {
   font-weight: 600;
 }
 
+/* ==========================
+   EQUIPMENT
+========================== */
+
+#equipment-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.equipment-card {
+  background: var(--card);
+
+  border: 1px solid var(--border);
+
+  border-radius: 24px;
+
+  padding: 36px;
+
+  transition: 0.35s ease;
+}
+
+.equipment-card:hover {
+  transform: translateY(-6px);
+
+  border-color: rgba(255, 107, 53, 0.4);
+
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+.equipment-card h3 {
+  font-size: 1.4rem;
+
+  margin-bottom: 16px;
+}
+
+.equipment-card p {
+  color: var(--muted);
+
+  line-height: 1.7;
+}
+
+/* ==========================
+   MOBILE
+========================== */
+
+@media (max-width: 900px) {
+  .equipment-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* SERVICES */
 .services-grid {
   display: grid;
@@ -852,29 +930,6 @@ footer {
 /* ==========================
    ANIMATIONS
 ========================== */
-
-.hidden-element {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: 1s;
-}
-
-.revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-@keyframes floatArrow {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(10px);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
 
 /* ==========================
    RESPONSIVE (consolidated)
