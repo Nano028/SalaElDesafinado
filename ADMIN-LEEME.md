@@ -14,7 +14,11 @@
 
 ## Estado de activación
 
-Los archivos están preparados. **No hay una implementación nueva de Apps Script publicada ni un enlace privado configurado todavía.** El sitio conserva la URL de disponibilidad anterior. Subir estos archivos a GitHub activa el menú y el ejemplo, pero la conexión real del panel necesita la implementación de Google de abajo.
+La **agenda privada ya está implementada y verificada con la planilla real**, con acceso limitado a la cuenta administradora configurada y permisos de Google de solo lectura. Su enlace está cargado en `adminUrl` en `script/config.js`.
+
+La **nueva API de disponibilidad está implementada con el acceso público autorizado**. La prueba devolvió 432 turnos y únicamente los cuatro campos previstos: fecha, horario, sala y disponible. Su enlace está configurado en `publicApiUrl`. No devuelve nombres de bandas, notas ni la dirección de la planilla.
+
+Los pasos de instalación de abajo quedan como referencia para el mantenimiento y para adaptar el sistema a otra sala. Para incorporar los cambios del sitio a GitHub Pages, integrar la rama `codex/panel-administrativo`.
 
 El ejemplo `admin/?demo=1` usa bandas ficticias y lleva un aviso visible. No muestra ni almacena las reservas reales. En caso de error de la conexión real, el panel muestra un error y nunca sustituye las reservas por ejemplos.
 

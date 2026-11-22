@@ -2,9 +2,9 @@
 window.SALA_CONFIG = Object.freeze({
   name: "El Desafinado",
   primary: "#ff6b35",
-  publicApiUrl: "https://script.google.com/macros/s/AKfycbxTSj74nVu76qFYJl8Vr4_-XWtmlwWRDfXQhZl3_o1tuWdXpfiCbLeQkUjZi6MijgCVXg/exec",
+  publicApiUrl: "https://script.google.com/macros/s/AKfycbxkkIE9fw6BPbTj3u13Eeu0hjiHwDn27Y1qefAxuR8MxqEV708Ikhp5ifCP4N2-wG6OAg/exec",
   whatsapp: "59893767029",
-  adminUrl: "",
+  adminUrl: "https://script.google.com/macros/s/AKfycbwtAWxXwgmz5A3QpzVuFnQpV6uwg1n_beiyhegkG5loBxQZaZiVs5Hp4wCh7vFZecxT/exec",
   timeZone: "America/Montevideo",
   slotMinutes: 60
 });
