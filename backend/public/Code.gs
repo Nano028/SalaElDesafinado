@@ -3,14 +3,23 @@ function doGet() {
   try {
     const p = PropertiesService.getScriptProperties().getProperties();
     if (!p.SHEET_ID) throw new Error('Falta configurar SHEET_ID.');
-    const sheet = SpreadsheetApp.openById(p.SHEET_ID).getSheetByName(p.SHEET_NAME || 'Hoja 1');
-    if (!sheet) throw new Error('No existe la pestaña configurada.');
-    const data = buildAvailability_(sheet.getDataRange().getDisplayValues(), Number(p.SLOT_MINUTES || 60));
+    const source = readSheet_(p.SHEET_ID,p.SHEET_NAME || 'Hoja 1');
+    const data = buildAvailability_(source.rows, Number(p.SLOT_MINUTES || 60));
     return json_({success:true,data:data});
   } catch (error) {
     // No publicar nombres de bandas, filas, IDs ni errores internos.
     return json_({success:false,error:'No se pudo leer la disponibilidad.'});
   }
+}
+function readSheet_(id, name) {
+  const book = Sheets.Spreadsheets.get(id, {fields:'spreadsheetUrl,sheets(properties)'});
+  const sheet = book.sheets.map(function(s){return s.properties;}).find(function(s){return s.title===name;});
+  if (!sheet) throw new Error('No existe la pestaña configurada.');
+  let column = '', n = sheet.gridProperties.columnCount;
+  while (n > 0) { n--; column = String.fromCharCode(65+n%26)+column; n=Math.floor(n/26); }
+  const range = "'"+name.replace(/'/g,"''")+"'!A1:"+column+sheet.gridProperties.rowCount;
+  const values = Sheets.Spreadsheets.Values.get(id,range,{valueRenderOption:'FORMATTED_VALUE',majorDimension:'ROWS'});
+  return {rows:values.values||[],url:book.spreadsheetUrl,sheetId:sheet.sheetId};
 }
 function json_(payload) {
   return ContentService.createTextOutput(JSON.stringify(payload)).setMimeType(ContentService.MimeType.JSON);

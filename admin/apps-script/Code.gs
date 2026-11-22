@@ -40,10 +40,19 @@ function doGet() {
 function getCalendarData() {
   const config = settings_();
   assertAccess_(config); // Se controla en cada actualización, además de doGet.
-  const book = SpreadsheetApp.openById(config.sheetId);
-  const sheet = book.getSheetByName(config.sheetName);
+  const source = readSheet_(config.sheetId, config.sheetName);
+  const parsed = AgendaModel.parseRows(source.rows, {slotMinutes:config.slotMinutes});
+  return {events:parsed.events,warnings:parsed.warnings,sheetUrl:source.url,sheetId:source.sheetId,updatedAt:new Date().toISOString()};
+}
+
+/** Sheets API permite autorizar solo lectura, sin permiso de edición. */
+function readSheet_(id, name) {
+  const book = Sheets.Spreadsheets.get(id, {fields:'spreadsheetUrl,sheets(properties)'});
+  const sheet = book.sheets.map(function(s){return s.properties;}).find(function(s){return s.title===name;});
   if (!sheet) throw new Error('No existe la pestaña configurada.');
-  const rows = sheet.getDataRange().getDisplayValues();
-  const parsed = AgendaModel.parseRows(rows, {slotMinutes:config.slotMinutes});
-  return {events:parsed.events,warnings:parsed.warnings,sheetUrl:book.getUrl(),sheetId:sheet.getSheetId(),updatedAt:new Date().toISOString()};
+  let column = '', n = sheet.gridProperties.columnCount;
+  while (n > 0) { n--; column = String.fromCharCode(65+n%26)+column; n=Math.floor(n/26); }
+  const range = "'"+name.replace(/'/g,"''")+"'!A1:"+column+sheet.gridProperties.rowCount;
+  const values = Sheets.Spreadsheets.Values.get(id,range,{valueRenderOption:'FORMATTED_VALUE',majorDimension:'ROWS'});
+  return {rows:values.values||[],url:book.spreadsheetUrl,sheetId:sheet.sheetId};
 }

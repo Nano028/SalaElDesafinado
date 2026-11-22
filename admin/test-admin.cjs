@@ -53,7 +53,7 @@ test('Una reserva inválida se informa con su fila; no desaparece sin aviso',()=
 const source = file => fs.readFileSync(path.join(__dirname,file),'utf8');
 test('El servidor comprueba identidad y autorización antes de leer la planilla',()=>{
   let active='admin@example.com',effective=active,reads=0;
-  const context=vm.createContext({Session:{getActiveUser:()=>({getEmail:()=>active}),getEffectiveUser:()=>({getEmail:()=>effective})},PropertiesService:{getScriptProperties:()=>({getProperties:()=>({SHEET_ID:'sheet',ADMIN_EMAILS:'admin@example.com'})})},SpreadsheetApp:{openById:()=>{reads++;return {getUrl:()=> 'https://docs.google.com/spreadsheets/d/sheet/edit',getSheetByName:()=>({getSheetId:()=>0,getDataRange:()=>({getDisplayValues:()=>[headers,['22/11/2026','18:00','A','Privada','20:00']]})})};}}});
+  const context=vm.createContext({Session:{getActiveUser:()=>({getEmail:()=>active}),getEffectiveUser:()=>({getEmail:()=>effective})},PropertiesService:{getScriptProperties:()=>({getProperties:()=>({SHEET_ID:'sheet',ADMIN_EMAILS:'admin@example.com'})})},Sheets:{Spreadsheets:{get:()=>{reads++;return {spreadsheetUrl:'https://docs.google.com/spreadsheets/d/sheet/edit',sheets:[{properties:{title:'Hoja 1',sheetId:0,gridProperties:{rowCount:12,columnCount:7}}}]};},Values:{get:(id,range)=>{assert.equal(range,"'Hoja 1'!A1:G12");return {values:[headers,['22/11/2026','18:00','A','Privada','20:00']]};}}}}});
   vm.runInContext(source('model.js')+'\n'+source('apps-script/Code.gs'),context);
   assert.equal(context.getCalendarData().events.length,1); assert.equal(reads,1);
   for(const pair of [['','admin@example.com'],['other@example.com','other@example.com'],['admin@example.com','owner@example.com']]){
@@ -72,4 +72,13 @@ test('La API pública bloquea toda la duración y nunca devuelve bandas o notas'
   assert.deepEqual(Object.keys(result[0]),['fecha','horario','sala','disponible']);
   assert.ok(!JSON.stringify(result).includes('Nombre privado'));
   assert.throws(()=>context.buildAvailability_([headers,['bad','18:00','A','Inválida']],60));
+});
+
+test('Ambos manifiestos piden solo lectura de Sheets, sin edición',()=>{
+  for(const file of ['apps-script/appsscript.json','../backend/public/appsscript.json']){
+    const manifest=JSON.parse(source(file));
+    assert.ok(manifest.oauthScopes.includes('https://www.googleapis.com/auth/spreadsheets.readonly'));
+    assert.ok(!manifest.oauthScopes.includes('https://www.googleapis.com/auth/spreadsheets'));
+    assert.equal(manifest.dependencies.enabledAdvancedServices[0].serviceId,'sheets');
+  }
 });
