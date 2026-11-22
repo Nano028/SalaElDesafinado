@@ -38,13 +38,13 @@
           <img src="./multimedia/logos/logo.png" alt="Logo de El Desafinado" class="logo-image" />
           <div class="logo">EL DESAFINADO</div>
 
-          <button type="button" class="nav-toggle" aria-label="Abrir menú">
+          <button type="button" class="nav-toggle" aria-label="Abrir menú" aria-expanded="false" aria-controls="primary-navigation">
             <span></span>
             <span></span>
             <span></span>
           </button>
 
-          <ul class="nav-links">
+          <ul class="nav-links" id="primary-navigation">
             <li>
               <a href="#hero"> Inicio </a>
             </li>
@@ -65,7 +65,10 @@
               <a href="#faq"> Preguntas </a>
             </li>
             <li>
-              <a href="https://wa.me/598093767029" target="_blank"> Reservar Ahora </a>
+              <a href="./admin/"> Admin </a>
+            </li>
+            <li>
+              <a href="https://wa.me/59893767029" target="_blank" rel="noopener"> Reservar Ahora </a>
             </li>
           </ul>
         </div>
@@ -102,7 +105,7 @@
             </p>
 
             <div class="hero-actions">
-              <a href="https://wa.me/598093767029" target="_blank" class="btn-primary"> Reservar Ahora </a>
+              <a href="https://wa.me/59893767029" target="_blank" rel="noopener" class="btn-primary"> Reservar Ahora </a>
 
               <a href="#availability" class="btn-secondary"> Ver Disponibilidad </a>
             </div>
@@ -378,6 +381,8 @@
       </div>
     </footer>
 
+    <script src="./script/config.js"></script>
+    <script src="./admin/model.js"></script>
     <script src="./script/script.js"></script>
   </body>
 </html>

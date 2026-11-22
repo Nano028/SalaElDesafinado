@@ -1,7 +1,6 @@
-const API_URL =
-  "https://script.google.com/macros/s/AKfycbxTSj74nVu76qFYJl8Vr4_-XWtmlwWRDfXQhZl3_o1tuWdXpfiCbLeQkUjZi6MijgCVXg/exec";
-
-const WHATSAPP_NUMBER = "598093767029";
+const API_URL = window.SALA_CONFIG.publicApiUrl;
+const WHATSAPP_NUMBER = window.SALA_CONFIG.whatsapp;
+const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
 
 let disponibilidad = [];
 let selectedDay = null;
@@ -24,11 +23,7 @@ function formatDateDisplay(ymd) {
 }
 
 function getTodayYMD() {
-  const today = new Date();
-  const y = today.getFullYear();
-  const m = String(today.getMonth() + 1).padStart(2, "0");
-  const d = String(today.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
+  return AgendaModel.today(window.SALA_CONFIG.timeZone);
 }
 
 /* =========================
@@ -42,6 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
   attachNavToggle();
   initParallax();
   cargarDisponibilidad();
+  window.setInterval(() => { if (!document.hidden) cargarDisponibilidad(); }, 120000);
 });
 
 function initParallax() {
@@ -93,6 +89,7 @@ function attachNavToggle() {
   toggle.addEventListener("click", () => {
     navbar.classList.toggle("nav-open");
     toggle.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", String(navbar.classList.contains("nav-open")));
   });
 
   links.forEach((link) => {
@@ -100,6 +97,7 @@ function attachNavToggle() {
       if (navbar.classList.contains("nav-open")) {
         navbar.classList.remove("nav-open");
         toggle.classList.remove("open");
+        toggle.setAttribute("aria-expanded", "false");
       }
     });
   });
@@ -142,7 +140,8 @@ function parseDateValue(value) {
 
 async function cargarDisponibilidad() {
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch(API_URL, {cache:"no-store", signal:AbortSignal.timeout(20000)});
+    if (!res.ok) throw new Error("Error HTTP " + res.status);
     const json = await res.json();
 
     if (json && typeof json.success === "boolean" && !json.success) {
@@ -163,10 +162,14 @@ async function cargarDisponibilidad() {
       return !isNaN(d.getTime());
     });
 
+    if (errorContainer) errorContainer.style.display = "none";
     renderDias();
   } catch (err) {
     console.error("ERROR CARGA:", err);
-    mostrarError("No se pudo cargar la disponibilidad");
+    disponibilidad = [];
+    if (calendarContainer) calendarContainer.innerHTML = "";
+    if (scheduleContainer) scheduleContainer.innerHTML = "";
+    mostrarError("No se pudo actualizar la disponibilidad. Consultá los horarios por WhatsApp o recargá la página.");
   }
 }
 
@@ -180,7 +183,8 @@ function renderDias() {
   }
 
   if (!disponibilidad.length) {
-    contenedor.innerHTML = "<p>No hay datos disponibles</p>";
+    calendarContainer.innerHTML = "<p>No hay turnos cargados. Consultá la disponibilidad por WhatsApp.</p>";
+    if (scheduleContainer) scheduleContainer.innerHTML = "";
     return;
   }
 
@@ -208,9 +212,9 @@ function renderDias() {
   calendarContainer.innerHTML = diasUnicos
     .map((dia) => {
       const dateObj = buildLocalDateFromYMD(dia);
-      const weekday = dateObj.toLocaleDateString(undefined, { weekday: "short" });
+      const weekday = dateObj.toLocaleDateString("es-UY", { weekday: "short" });
       const dayNum = String(dateObj.getDate()).padStart(2, "0");
-      const month = dateObj.toLocaleDateString(undefined, { month: "short" });
+      const month = dateObj.toLocaleDateString("es-UY", { month: "short" });
       const activeClass = dia === selectedDay ? " active" : "";
 
       return `
@@ -237,8 +241,8 @@ function seleccionarDia(fecha) {
 /* =========================
    RENDER DETALLE
 ========================= */
-function buildWhatsAppLink(dia, horario) {
-  const text = `quiero reservar el día ${formatDateDisplay(dia)} en la hora ${horario}`;
+function buildWhatsAppLink(dia, horario, sala) {
+  const text = `Hola, quiero consultar una reserva el ${formatDateDisplay(dia)} a las ${horario} en la sala ${sala}.`;
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 }
 
@@ -256,15 +260,16 @@ function renderDetalle(items) {
   scheduleContainer.innerHTML = items
     .map((item) => {
       const horarioFormateado = formatHora(item.horario);
-      const disponibleButton = item.disponible
-        ? `<a class="reserve-button" href="${buildWhatsAppLink(selectedDay, horarioFormateado)}" target="_blank" rel="noopener">Agendar</a>`
+      const libre = item.disponible === true || String(item.disponible).toLowerCase() === "true";
+      const disponibleButton = libre
+        ? `<a class="reserve-button" href="${escapeHtml(buildWhatsAppLink(selectedDay, horarioFormateado, item.sala))}" target="_blank" rel="noopener">Consultar</a>`
         : `<div class="slot-status occupied">Ocupada</div>`;
 
       return `
     <div class="schedule-slot">
       <div class="slot-info">
-        <div class="slot-time">${horarioFormateado}</div>
-        <div class="occupied-label">Sala ${item.sala}</div>
+        <div class="slot-time">${escapeHtml(horarioFormateado)}</div>
+        <div class="occupied-label">Sala ${escapeHtml(item.sala)}</div>
       </div>
       ${disponibleButton}
     </div>
@@ -277,6 +282,8 @@ function renderDetalle(items) {
    FORMATO FECHA SEGURO
 ========================= */
 function formatDate(fecha) {
+  const canonical = AgendaModel.parseDate(fecha);
+  if (canonical) return canonical;
   const d = parseDateValue(fecha);
   if (isNaN(d.getTime())) return null;
 
@@ -291,6 +298,8 @@ function formatDate(fecha) {
    FORMATO HORA SEGURO
 ========================= */
 function formatHora(hora) {
+  const minutes = AgendaModel.parseTime(hora);
+  if (minutes !== null) return AgendaModel.timeText(minutes);
   if (typeof hora === "string") {
     if (/^\d{1,2}:\d{2}$/.test(hora)) {
       return hora;
