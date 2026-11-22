@@ -82,3 +82,36 @@ test('Ambos manifiestos piden solo lectura de Sheets, sin edición',()=>{
     assert.equal(manifest.dependencies.enabledAdvancedServices[0].serviceId,'sheets');
   }
 });
+
+test('La demo pública solo lee su planilla independiente; view=agenda nunca expone la real',()=>{
+  const properties={SHEET_ID:'private-sheet',DEMO_SHEET_ID:'demo-sheet'};
+  const reads=[];
+  let title='DEMO · Reservas ficticias';
+  const context=vm.createContext({
+    PropertiesService:{getScriptProperties:()=>({getProperties:()=>properties})},
+    ContentService:{MimeType:{JSON:'json'},createTextOutput:text=>({setMimeType:()=>JSON.parse(text)})},
+    Sheets:{Spreadsheets:{get:id=>{reads.push(id);return {properties:{title},spreadsheetUrl:'https://docs.google.com/spreadsheets/d/'+id+'/edit',sheets:[{properties:{title:id==='demo-sheet'?'Reservas demo':'Hoja 1',sheetId:0,gridProperties:{rowCount:4,columnCount:6}}}]};},Values:{get:id=>({values:[headers,['22/11/2026','18:00','A',id==='demo-sheet'?'Banda ficticia':'Banda privada','20:00']]})}}}
+  });
+  vm.runInContext(source('model.js')+'\n'+source('../backend/public/Code.gs'),context);
+  const publicResult=context.doGet({parameter:{view:'agenda'}});
+  assert.equal(publicResult.success,true);
+  assert.deepEqual(Object.keys(publicResult.data[0]),['fecha','horario','sala','disponible']);
+  assert.ok(!JSON.stringify(publicResult).includes('Banda privada'));
+  const demoResult=context.doGet({parameter:{demo:'1',view:'agenda',sheetId:'private-sheet'}});
+  assert.equal(demoResult.demo,true);
+  assert.equal(demoResult.events[0].band,'Banda ficticia');
+  assert.equal(demoResult.sheetUrl,'https://docs.google.com/spreadsheets/d/demo-sheet/edit');
+  assert.deepEqual(reads,['private-sheet','demo-sheet']);
+  const availability=context.doGet({parameter:{demo:'1'}});
+  assert.equal(availability.demo,true);
+  assert.deepEqual(Object.keys(availability.data[0]),['fecha','horario','sala','disponible']);
+  assert.ok(!JSON.stringify(availability).includes('Banda ficticia'));
+  title='Reservas reales';
+  assert.equal(context.doGet({parameter:{demo:'1',view:'agenda'}}).success,false);
+  properties.DEMO_SHEET_ID=properties.SHEET_ID;
+  const previousReads=reads.length;
+  assert.equal(context.doGet({parameter:{demo:'1',view:'agenda'}}).success,false);
+  delete properties.DEMO_SHEET_ID;
+  assert.equal(context.doGet({parameter:{demo:'1',view:'agenda'}}).success,false);
+  assert.equal(reads.length,previousReads,'No usa la planilla real como alternativa si la demo no está configurada.');
+});
