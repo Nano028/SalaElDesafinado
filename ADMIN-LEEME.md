@@ -2,7 +2,7 @@
 
 ## Qué está listo
 
-- Menú **Admin** en el sitio público.
+- Acceso por enlace directo a `/admin/`, que abre automáticamente la agenda privada. El menú público no muestra ese acceso.
 - Panel con la identidad de El Desafinado, adaptable a celular.
 - Vistas semanal, mensual y lista; filtros por sala, estado y banda.
 - Detalle de cada reserva y enlace a sus filas en Google Sheets.
@@ -10,6 +10,7 @@
 - Agrupación de turnos consecutivos, aviso de superposiciones y reservas que cruzan medianoche.
 - Refresco manual y cada minuto mientras la agenda está abierta.
 - Backend privado con control de cuenta en el servidor; la planilla sigue siendo el lugar de edición.
+- Botón discreto al pie de la agenda para abrir la planilla de Google Sheets.
 - Backend público separado: publica solamente fecha, horario, sala y disponibilidad.
 
 ## Estado de activación
@@ -18,13 +19,13 @@ La **agenda privada ya está implementada y verificada con la planilla real**, c
 
 La **nueva API de disponibilidad está implementada con el acceso público autorizado**. La prueba devolvió 432 turnos y únicamente los cuatro campos previstos: fecha, horario, sala y disponible. Su enlace está configurado en `publicApiUrl`. No devuelve nombres de bandas, notas ni la dirección de la planilla.
 
-Los pasos de instalación de abajo quedan como referencia para el mantenimiento y para adaptar el sistema a otra sala. Para incorporar los cambios del sitio a GitHub Pages, integrar la rama `codex/panel-administrativo`.
+Los pasos de instalación de abajo quedan como referencia para el mantenimiento y para adaptar el sistema a otra sala. Los cambios del sitio se publican en GitHub Pages al integrarlos a `main`.
 
 El ejemplo `admin/?demo=1` usa bandas ficticias y lleva un aviso visible. No muestra ni almacena las reservas reales. En caso de error de la conexión real, el panel muestra un error y nunca sustituye las reservas por ejemplos.
 
 ## 1. Probar el panel
 
-Abrir `admin/index.html?demo=1` desde un servidor estático, o publicar esta rama en un entorno de prueba y entrar a **Admin → Ver ejemplo de la agenda**. El panel no requiere instalar dependencias.
+Para consultar reservas reales, abrir directamente `/admin/`: redirige a la agenda privada y Google solicita la cuenta autorizada cuando corresponde. Para probar con datos ficticios, abrir `admin/index.html?demo=1` desde un servidor estático. El panel no requiere instalar dependencias.
 
 ## 2. Activar la agenda privada en Google
 
