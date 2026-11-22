@@ -1,7 +1,9 @@
-/** API pública: expone únicamente fecha, horario, sala y disponible. */
-function doGet() {
+/** Disponibilidad real limitada a cuatro campos; demo conectada a una planilla separada. */
+function doGet(e) {
   try {
     const p = PropertiesService.getScriptProperties().getProperties();
+    const query = e && e.parameter || {};
+    if (query.demo === '1') return demoResponse_(p, query.view === 'agenda');
     if (!p.SHEET_ID) throw new Error('Falta configurar SHEET_ID.');
     const source = readSheet_(p.SHEET_ID,p.SHEET_NAME || 'Hoja 1');
     const data = buildAvailability_(source.rows, Number(p.SLOT_MINUTES || 60));
@@ -12,14 +14,24 @@ function doGet() {
   }
 }
 function readSheet_(id, name) {
-  const book = Sheets.Spreadsheets.get(id, {fields:'spreadsheetUrl,sheets(properties)'});
+  const book = Sheets.Spreadsheets.get(id, {fields:'spreadsheetUrl,properties(title),sheets(properties)'});
   const sheet = book.sheets.map(function(s){return s.properties;}).find(function(s){return s.title===name;});
   if (!sheet) throw new Error('No existe la pestaña configurada.');
   let column = '', n = sheet.gridProperties.columnCount;
   while (n > 0) { n--; column = String.fromCharCode(65+n%26)+column; n=Math.floor(n/26); }
   const range = "'"+name.replace(/'/g,"''")+"'!A1:"+column+sheet.gridProperties.rowCount;
   const values = Sheets.Spreadsheets.Values.get(id,range,{valueRenderOption:'FORMATTED_VALUE',majorDimension:'ROWS'});
-  return {rows:values.values||[],url:book.spreadsheetUrl,sheetId:sheet.sheetId};
+  return {rows:values.values||[],url:book.spreadsheetUrl,sheetId:sheet.sheetId,title:book.properties && book.properties.title || ''};
+}
+function demoResponse_(p, agenda) {
+  // Nunca reutilizar SHEET_ID ni admitir IDs enviados por el visitante.
+  if (!p.DEMO_SHEET_ID || p.DEMO_SHEET_ID === p.SHEET_ID) throw new Error('Falta una planilla de demostración independiente.');
+  const source = readSheet_(p.DEMO_SHEET_ID, p.DEMO_SHEET_NAME || 'Reservas demo');
+  if (source.title.indexOf('DEMO · ') !== 0) throw new Error('La planilla no está identificada como demostración.');
+  const slotMinutes = Number(p.SLOT_MINUTES || 60);
+  if (!agenda) return json_({success:true,demo:true,data:buildAvailability_(source.rows,slotMinutes)});
+  const parsed = AgendaModel.parseRows(source.rows,{slotMinutes:slotMinutes});
+  return json_({success:true,demo:true,events:parsed.events,warnings:parsed.warnings,sheetUrl:source.url,sheetId:source.sheetId,updatedAt:new Date().toISOString()});
 }
 function json_(payload) {
   return ContentService.createTextOutput(JSON.stringify(payload)).setMimeType(ContentService.MimeType.JSON);

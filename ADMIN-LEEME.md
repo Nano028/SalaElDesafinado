@@ -2,7 +2,7 @@
 
 ## Qué está listo
 
-- Acceso por enlace directo a `/admin/`, que abre automáticamente la agenda privada. El menú público no muestra ese acceso.
+- Acceso por enlace directo a `/admin/`, que abre la demostración sin cuenta de Google. El menú público no muestra ese acceso.
 - Panel con la identidad de El Desafinado, adaptable a celular.
 - Vistas semanal, mensual y lista; filtros por sala, estado y banda.
 - Detalle de cada reserva y enlace a sus filas en Google Sheets.
@@ -11,21 +11,37 @@
 - Refresco manual y cada minuto mientras la agenda está abierta.
 - Backend privado con control de cuenta en el servidor; la planilla sigue siendo el lugar de edición.
 - Botón discreto al pie de la agenda para abrir la planilla de Google Sheets.
-- Backend público separado: publica solamente fecha, horario, sala y disponibilidad.
+- Backend público separado: la disponibilidad real publica solamente fecha, horario, sala y disponibilidad. La demo usa una planilla ficticia independiente.
 
 ## Estado de activación
 
-La **agenda privada ya está implementada y verificada con la planilla real**, con acceso limitado a la cuenta administradora configurada y permisos de Google de solo lectura. Su enlace está cargado en `adminUrl` en `script/config.js`.
+Este repositorio se publica como **demostración comercial**. El sitio público y `/admin/` leen la misma planilla de ejemplo. Cualquier visitante puede ver la página, consultar la agenda y abrir la planilla sin iniciar sesión. La planilla es de **solo lectura para visitantes**; su propietario puede editar las reservas y pulsar Actualizar en la agenda para mostrar el cambio. Las fechas del ejemplo avanzan con la semana actual mediante fórmulas de Sheets.
 
-La **nueva API de disponibilidad está implementada con el acceso público autorizado**. La prueba devolvió 432 turnos y únicamente los cuatro campos previstos: fecha, horario, sala y disponible. Su enlace está configurado en `publicApiUrl`. No devuelve nombres de bandas, notas ni la dirección de la planilla.
+La agenda privada original conserva sus controles de Google y su configuración. No se amplió su acceso. Su enlace sigue en `adminUrl`, reservado para una configuración con `demoMode:false`.
+
+Configuración pública en `script/config.js`:
+
+- `demoMode:true` abre la agenda de demostración directamente en `/admin/`; `?demo=1` también sigue funcionando.
+- `publicApiUrl` incluye `?demo=1` y devuelve la disponibilidad de la planilla ficticia sin bandas.
+- `demoApiUrl` incluye `?demo=1&view=agenda` y devuelve las reservas ficticias y el enlace a su planilla.
+
+Propiedades del backend público: `DEMO_SHEET_ID` y `DEMO_SHEET_NAME=Reservas demo`. El ID debe ser distinto de `SHEET_ID` y el título de esa planilla debe comenzar con `DEMO · `. No se admiten IDs de planillas enviados por visitantes. La ruta normal del backend sigue limitada a cuatro campos y no expone las reservas reales.
 
 Los pasos de instalación de abajo quedan como referencia para el mantenimiento y para adaptar el sistema a otra sala. Los cambios del sitio se publican en GitHub Pages al integrarlos a `main`.
 
-El ejemplo `admin/?demo=1` usa bandas ficticias y lleva un aviso visible. No muestra ni almacena las reservas reales. En caso de error de la conexión real, el panel muestra un error y nunca sustituye las reservas por ejemplos.
+La demostración lleva un aviso visible. Si falla su conexión, muestra un error y no sustituye los turnos de Sheets por ejemplos locales. El ejemplo local sin `demoApiUrl` queda disponible para desarrollo.
 
 ## 1. Probar el panel
 
-Para consultar reservas reales, abrir directamente `/admin/`: redirige a la agenda privada y Google solicita la cuenta autorizada cuando corresponde. Para probar con datos ficticios, abrir `admin/index.html?demo=1` desde un servidor estático. El panel no requiere instalar dependencias.
+Abrir `/admin/` sin cuenta de Google, recorrer las vistas y abrir el botón de la planilla al pie. Para mostrar la sincronización, el propietario puede modificar una reserva ficticia en Sheets y pulsar Actualizar. Al volver a cargar el sitio público, la disponibilidad debe reflejar el mismo cambio. No hace falta instalar dependencias.
+
+## Pasar de la demostración a un cliente
+
+1. Crear una instalación y planilla propias para el negocio, con su identidad y datos reales.
+2. En la copia del sitio, usar `demoMode:false`, quitar `demoApiUrl` y configurar `publicApiUrl` sin `?demo=1` con la API de disponibilidad del cliente.
+3. Implementar la agenda privada con la configuración de abajo y cargar su URL en `adminUrl`.
+4. Autorizar las cuentas de Google del cliente en `ADMIN_EMAILS` y darles acceso a su planilla. Cada persona inicia sesión con su propia cuenta; no se comparten ni se guardan contraseñas de Google en el sitio.
+5. Restringir la planilla del negocio a las cuentas autorizadas. La demo comercial conserva únicamente datos ficticios y sigue abierta para prospectos.
 
 ## 2. Activar la agenda privada en Google
 

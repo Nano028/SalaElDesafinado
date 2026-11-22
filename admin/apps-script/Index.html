@@ -206,11 +206,15 @@
   const M = window.AgendaModel, config = window.SALA_CONFIG || {};
   const $ = id => document.getElementById(id);
   const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
-  const demo = new URLSearchParams(location.search).get("demo") === "1";
   const live = Boolean(window.google && google.script && google.script.run);
+  const demo = !live && (config.demoMode === true || new URLSearchParams(location.search).get("demo") === "1");
+  const demoApi = demo ? safeDemoApi(config.demoApiUrl) : "";
   const state = { events: [], warnings: [], date: M.today(config.timeZone), view: matchMedia("(max-width:760px)").matches ? "list" : "week", room: "", status: "active", search: "", sheetUrl: "", sheetId: 0, loaded: false, loading: false };
   const states = { reservada: "Reservada", pendiente: "Pendiente", cancelada: "Cancelada" };
   const safeUrl = value => { try { const u = new URL(value); return u.protocol === "https:" ? u.href : ""; } catch (_) { return ""; } };
+  function safeDemoApi(value) {
+    try { const u = new URL(value); return u.protocol === "https:" && u.hostname === "script.google.com" && u.searchParams.get("demo") === "1" && u.searchParams.get("view") === "agenda" ? u.href : ""; } catch (_) { return ""; }
+  }
   const rangeText = e => M.timeText(e.start) + "–" + M.timeText(e.end) + (e.end > 1440 ? " (+1 día)" : "");
   const roomClass = room => "room-" + (Math.max(0, [...new Set(state.events.map(e => e.room))].sort().indexOf(room)) % 3);
   function dateRange() {
@@ -255,7 +259,7 @@
     const conflicts = M.conflicts(state.events);
     if (conflicts.size) warnings.push("Hay reservas superpuestas en una misma sala. Revisalas en la planilla.");
     $("warnings").textContent = warnings.join(" "); $("warnings").hidden = !warnings.length;
-    $("sync-time").textContent = demo && !live ? "Datos de ejemplo" : "Actualizada " + new Intl.DateTimeFormat("es-UY", {timeZone:config.timeZone || "America/Montevideo",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date());
+    $("sync-time").textContent = demo && !demoApi ? "Datos de ejemplo" : "Actualizada " + new Intl.DateTimeFormat("es-UY", {timeZone:config.timeZone || "America/Montevideo",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date());
     render();
   }
   function load() {
@@ -263,17 +267,24 @@
     state.loading = true; $("refresh").disabled = true; $("calendar").setAttribute("aria-busy","true");
     $("sync-time").textContent = "Cargando…";
     let finished = false;
+    const controller = new AbortController();
     const timeout = setTimeout(() => fail(), 20000);
-    const finish = () => { finished=true; clearTimeout(timeout); state.loading = false; $("refresh").disabled = false; $("calendar").setAttribute("aria-busy","false"); };
+    const finish = () => { finished=true; clearTimeout(timeout); controller.abort(); state.loading = false; $("refresh").disabled = false; $("calendar").setAttribute("aria-busy","false"); };
     const fail = () => {
       if (finished) return;
-      finish(); $("error").textContent = "No se pudo actualizar la agenda. Revisá tu acceso y probá Actualizar."; $("error").hidden = false;
+      finish(); $("error").textContent = demo ? "No se pudo leer la planilla de demostración. Probá Actualizar." : "No se pudo actualizar la agenda. Revisá tu acceso y probá Actualizar."; $("error").hidden = false;
       $("sync-time").textContent = state.loaded ? "Sin actualizar · datos anteriores" : "Sin conexión";
-      if (!state.loaded) $("calendar").innerHTML = '<div class="empty"><strong>No pudimos leer las reservas</strong>El acceso debe estar habilitado para tu cuenta de Google.</div>';
+      if (!state.loaded) $("calendar").innerHTML = '<div class="empty"><strong>No pudimos leer las reservas</strong>'+(demo?'La demo debe estar conectada a su planilla pública.':'El acceso debe estar habilitado para tu cuenta de Google.')+'</div>';
     };
     if (live) {
       google.script.run.withSuccessHandler(data => { if(finished)return; try { applyData(data); finish(); } catch (_) { fail(); } }).withFailureHandler(fail).getCalendarData();
-    } else { try { applyData(fixtures()); finish(); } catch (_) { fail(); } }
+    } else if (demoApi) {
+      fetch(demoApi,{cache:"no-store",credentials:"omit",signal:controller.signal})
+        .then(response=>{if(!response.ok)throw new Error("Respuesta inválida");return response.json();})
+        .then(data=>{if(finished)return;if(data.success!==true || data.demo!==true)throw new Error("La respuesta no corresponde a la demo");applyData(data);finish();})
+        .catch(fail);
+    } else if (config.demoApiUrl) { fail(); }
+    else { try { applyData(fixtures()); finish(); } catch (_) { fail(); } }
   }
   function renderSummary() {
     const monday = M.monday(state.date), end = M.addDays(monday,6);
@@ -338,7 +349,7 @@
     const rows=[["Fecha",M.label(e.date,{weekday:"long",day:"numeric",month:"long",year:"numeric"})],["Horario",rangeText(e)],["Sala",e.room],["Estado",states[e.status]]];
     if(e.notes) rows.push(["Notas",e.notes]);
     if(e.inferredEnd) rows.push(["Duración","Hasta no está indicado. Se calculan turnos de "+(config.slotMinutes||60)+" minutos; completá Hasta en la planilla para otra duración."]);
-    if(live) rows.push(["Filas de origen",e.rows.join(", ")]);
+    if(state.sheetUrl) rows.push(["Filas de origen",e.rows.join(", ")]);
     $("booking-detail").innerHTML=rows.map(([label,value])=>'<div><dt>'+esc(label)+'</dt><dd>'+esc(value)+'</dd></div>').join("");
     $("booking-row").hidden=!state.sheetUrl;
     if(state.sheetUrl) $("booking-row").href=state.sheetUrl.split("#")[0]+"#gid="+state.sheetId+"&range=A"+Math.min(...e.rows)+":E"+Math.max(...e.rows);
@@ -351,7 +362,8 @@
     $("setup-message").hidden=false;
     return;
   }
-  $("dashboard").hidden=false; $("demo-banner").hidden=live;
+  $("dashboard").hidden=false; $("demo-banner").hidden=!demo;
+  if(demoApi) $("demo-banner").textContent="Demostración pública · Reservas ficticias conectadas a Google Sheets. La planilla es de solo lectura para visitantes.";
   if(/^#[\da-f]{6}$/i.test(config.primary||"")) document.documentElement.style.setProperty("--primary",config.primary);
   $("brand-name").textContent=String(config.name||"El Desafinado").toUpperCase();
   const site=safeUrl(config.siteUrl);
@@ -366,7 +378,7 @@
   $("calendar").addEventListener("click",e=>{const event=e.target.closest("[data-event]"),day=e.target.closest("[data-day]");if(event)openEvent(event.dataset.event);if(day){state.date=day.dataset.day;state.view="list";render();}});
   $("close-dialog").addEventListener("click",()=>$("booking-dialog").close());
   load();
-  if(live) setInterval(()=>{if(!document.hidden)load();},60000);
+  if(live || demoApi) setInterval(()=>{if(!document.hidden)load();},60000);
 })();
 
 </script>
