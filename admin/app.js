@@ -44,7 +44,8 @@
     $("room-filter").innerHTML = '<option value="">Todas las salas</option>' + [...new Set(state.events.map(e => e.room))].sort().map(r => '<option value="' + esc(r) + '">Sala ' + esc(r) + '</option>').join("");
     if ([...$("room-filter").options].some(o => o.value === room)) $("room-filter").value = room;
     else state.room = "";
-    if (state.sheetUrl) ["sheet-link","sheet-link-mobile"].forEach(id=>{ $(id).href=state.sheetUrl; $(id).hidden=false; });
+    if (state.sheetUrl) ["sheet-link","sheet-link-mobile","sheet-footer-link"].forEach(id=>{ $(id).href=state.sheetUrl; $(id).hidden=false; });
+    $("sheet-footer-note").hidden=Boolean(state.sheetUrl);
     $("error").hidden = true;
     const warnings = [];
     if (state.warnings.length) warnings.push(state.warnings.length + " fila(s) necesitan revisión: " + state.warnings.map(w => w.row).join(", ") + ".");
@@ -141,10 +142,10 @@
     $("booking-dialog").showModal();
   }
   if (!live && !demo) {
-    $("access").hidden=false;
     const url=safeUrl(config.adminUrl);
-    if(url && new URL(url).hostname==="script.google.com") { $("login-link").href=url; $("login-link").hidden=false; }
-    else $("setup-message").hidden=false;
+    if(url && new URL(url).hostname==="script.google.com") { window.location.replace(url); return; }
+    $("access").hidden=false;
+    $("setup-message").hidden=false;
     return;
   }
   $("dashboard").hidden=false; $("demo-banner").hidden=live;

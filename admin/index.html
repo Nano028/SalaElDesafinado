@@ -43,7 +43,7 @@
         <div class="calendar-toolbar"><div class="period"><h2 id="period-title"></h2><div class="date-navigation"><button class="button small secondary" id="previous" type="button">Anterior</button><button class="button small secondary" id="today" type="button">Hoy</button><button class="button small secondary" id="next" type="button">Siguiente</button></div></div><div class="view-switch" role="group" aria-label="Vista de la agenda"><button data-view="week" type="button" aria-pressed="true">Semana</button><button data-view="month" type="button" aria-pressed="false">Mes</button><button data-view="list" type="button" aria-pressed="false">Lista</button></div></div>
         <div class="filters"><label>Sala<select id="room-filter"><option value="">Todas las salas</option></select></label><label>Estado<select id="status-filter"><option value="active">Activas</option><option value="all">Todos</option><option value="reservada">Reservadas</option><option value="pendiente">Pendientes</option><option value="cancelada">Canceladas</option></select></label><label class="search-field">Buscar banda<input id="search" type="search" placeholder="Nombre de la banda" autocomplete="off" /></label></div>
         <div id="calendar" aria-live="polite" aria-busy="false"></div>
-        <div class="calendar-footer"><span id="result-count"></span><span>Los turnos se editan desde Google Sheets.</span></div>
+        <div class="calendar-footer"><span id="result-count"></span><span id="sheet-footer-note">Los turnos se editan desde Google Sheets.</span><a id="sheet-footer-link" class="sheet-footer-link" target="_blank" rel="noopener noreferrer" hidden>Los turnos se editan desde Google Sheets.</a></div>
       </section>
     </main>
   </div>
