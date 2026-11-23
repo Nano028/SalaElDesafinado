@@ -50,15 +50,15 @@ Crear un proyecto **nuevo** en Apps Script llamado `El Desafinado · Agenda priv
 1. Copiar los archivos de `admin/apps-script/` al proyecto: `Code.gs`, `Model.gs`, `Index.html` y `appsscript.json`. El manifiesto se hace visible en Configuración del proyecto → Mostrar archivo de manifiesto.
 2. En Configuración del proyecto → Propiedades del script, cargar:
 
-| Propiedad | Valor |
-| --- | --- |
-| `SHEET_ID` | ID de la planilla de reservas, entre `/d/` y `/edit` en su enlace |
-| `SHEET_NAME` | `Hoja 1` |
-| `ADMIN_EMAILS` | Correos autorizados, separados por coma |
-| `SITE_URL` | `https://nano028.github.io/SalaElDesafinado/` |
-| `BRAND_NAME` | `El Desafinado` |
-| `BRAND_COLOR` | `#ff6b35` |
-| `SLOT_MINUTES` | `60` |
+| Propiedad      | Valor                                                             |
+| -------------- | ----------------------------------------------------------------- |
+| `SHEET_ID`     | ID de la planilla de reservas, entre `/d/` y `/edit` en su enlace |
+| `SHEET_NAME`   | `Hoja 1`                                                          |
+| `ADMIN_EMAILS` | Correos autorizados, separados por coma                           |
+| `SITE_URL`     | `https://nano028.github.io/SalaElDesafinado/`                     |
+| `BRAND_NAME`   | `El Desafinado`                                                   |
+| `BRAND_COLOR`  | `#ff6b35`                                                         |
+| `SLOT_MINUTES` | `60`                                                              |
 
 3. Implementar → Nueva implementación → Aplicación web. **Ejecutar como: usuario que accede a la aplicación web**. Acceso: usuarios con cuenta de Google (o solo tu cuenta para la primera prueba).
 4. Abrir el enlace con una cuenta incluida en `ADMIN_EMAILS`, que además debe tener al menos permiso de lectura en la planilla. Cada usuario autoriza el acceso de Google al entrar. El manifiesto usa el servicio avanzado Sheets v4 y el permiso `spreadsheets.readonly`: **Google concede solo lectura, sin edición**. Este permiso permite consultar hojas de la cuenta; el código limita sus consultas al `SHEET_ID` configurado. El servicio se habilita desde el manifiesto; si se usa un proyecto Cloud estándar, activar además Google Sheets API en ese proyecto.

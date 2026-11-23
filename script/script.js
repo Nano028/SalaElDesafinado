@@ -1,20 +1,32 @@
-const API_URL = window.SALA_CONFIG.publicApiUrl;
-const WHATSAPP_NUMBER = window.SALA_CONFIG.whatsapp;
-const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]);
+const apiUrl = window.SALA_CONFIG.publicApiUrl;
+const whatsappNumber = window.SALA_CONFIG.whatsapp;
 
-let disponibilidad = [];
+const escapeHtml = (value) =>
+  String(value ?? "").replace(
+    /[&<>"']/g,
+    (character) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      })[character],
+  );
+
+let availability = [];
 let selectedDay = null;
 let calendarContainer = null;
 let scheduleContainer = null;
 let errorContainer = null;
 
-function buildLocalDateFromYMD(ymd) {
+function buildLocalDateFromYmd(ymd) {
   const [y, m, d] = ymd.split("-").map(Number);
   return new Date(y, m - 1, d);
 }
 
 function formatDateDisplay(ymd) {
-  const date = buildLocalDateFromYMD(ymd);
+  const date = buildLocalDateFromYmd(ymd);
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const year = date.getFullYear();
@@ -22,22 +34,24 @@ function formatDateDisplay(ymd) {
   return `${day}/${month}/${year}`;
 }
 
-function getTodayYMD() {
+function getTodayYmd() {
   return AgendaModel.today(window.SALA_CONFIG.timeZone);
 }
 
-/* =========================
-   INIT
-========================= */
 document.addEventListener("DOMContentLoaded", () => {
   calendarContainer = document.getElementById("calendar-days");
   scheduleContainer = document.getElementById("schedule");
   errorContainer = document.getElementById("error");
+
   attachFaqToggle();
   attachNavToggle();
+  attachCalendarSelection();
   initParallax();
-  cargarDisponibilidad();
-  window.setInterval(() => { if (!document.hidden) cargarDisponibilidad(); }, 120000);
+  loadAvailability();
+
+  window.setInterval(() => {
+    if (!document.hidden) loadAvailability();
+  }, 120000);
 });
 
 function initParallax() {
@@ -47,7 +61,9 @@ function initParallax() {
 
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-  const isTouchDevice = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+  const isTouchDevice = window.matchMedia(
+    "(hover: none), (pointer: coarse)",
+  ).matches;
   if (isTouchDevice) return;
 
   let ticking = false;
@@ -76,9 +92,6 @@ function initParallax() {
   window.addEventListener("resize", updateParallax);
 }
 
-/* =========================
-   NAV TOGGLE
-========================= */
 function attachNavToggle() {
   const navbar = document.querySelector(".navbar");
   const toggle = document.querySelector(".nav-toggle");
@@ -89,7 +102,10 @@ function attachNavToggle() {
   toggle.addEventListener("click", () => {
     navbar.classList.toggle("nav-open");
     toggle.classList.toggle("open");
-    toggle.setAttribute("aria-expanded", String(navbar.classList.contains("nav-open")));
+    toggle.setAttribute(
+      "aria-expanded",
+      String(navbar.classList.contains("nav-open")),
+    );
   });
 
   links.forEach((link) => {
@@ -103,9 +119,6 @@ function attachNavToggle() {
   });
 }
 
-/* =========================
-   FAQ TOGGLE
-========================= */
 function attachFaqToggle() {
   const faqButtons = Array.from(document.querySelectorAll(".faq-question"));
 
@@ -120,9 +133,6 @@ function attachFaqToggle() {
   });
 }
 
-/* =========================
-   FETCH
-========================= */
 function parseDateValue(value) {
   if (!value) return new Date(NaN);
 
@@ -138,11 +148,18 @@ function parseDateValue(value) {
   return new Date(value);
 }
 
-async function cargarDisponibilidad() {
+async function loadAvailability() {
+  const controller = new AbortController();
+  const timeoutId = window.setTimeout(() => controller.abort(), 20000);
+
   try {
-    const res = await fetch(API_URL, {cache:"no-store", signal:AbortSignal.timeout(20000)});
-    if (!res.ok) throw new Error("Error HTTP " + res.status);
-    const json = await res.json();
+    const response = await fetch(apiUrl, {
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    if (!response.ok) throw new Error("Error HTTP " + response.status);
+
+    const json = await response.json();
 
     if (json && typeof json.success === "boolean" && !json.success) {
       throw new Error(json.error || "API returned failure");
@@ -154,7 +171,7 @@ async function cargarDisponibilidad() {
       throw new Error("API sin data");
     }
 
-    disponibilidad = data.filter((item) => {
+    availability = data.filter((item) => {
       if (!item || !item.fecha) return false;
       if (item.fecha === "fecha") return false;
 
@@ -163,62 +180,81 @@ async function cargarDisponibilidad() {
     });
 
     if (errorContainer) errorContainer.style.display = "none";
-    renderDias();
+    renderDays();
   } catch (err) {
-    console.error("ERROR CARGA:", err);
-    disponibilidad = [];
+    console.error("Error al cargar disponibilidad:", err);
+    availability = [];
     if (calendarContainer) calendarContainer.innerHTML = "";
     if (scheduleContainer) scheduleContainer.innerHTML = "";
-    mostrarError("No se pudo actualizar la disponibilidad. Consultá los horarios por WhatsApp o recargá la página.");
+    showError(
+      "No se pudo actualizar la disponibilidad. Consultá los horarios por WhatsApp o recargá la página.",
+    );
+  } finally {
+    window.clearTimeout(timeoutId);
   }
 }
 
-/* =========================
-   RENDER DÍAS
-========================= */
-function renderDias() {
+function attachCalendarSelection() {
+  if (!calendarContainer) return;
+
+  calendarContainer.addEventListener("click", (event) => {
+    const dayButton = event.target.closest("[data-day]");
+    if (!dayButton) return;
+
+    selectedDay = dayButton.dataset.day;
+    renderDays();
+  });
+}
+
+function renderDays() {
   if (!calendarContainer) {
-    console.error("No existe #calendar-days en HTML");
+    console.error("No existe #calendar-days en el documento.");
     return;
   }
 
-  if (!disponibilidad.length) {
-    calendarContainer.innerHTML = "<p>No hay turnos cargados. Consultá la disponibilidad por WhatsApp.</p>";
+  if (!availability.length) {
+    calendarContainer.innerHTML =
+      "<p>No hay turnos cargados. Consultá la disponibilidad por WhatsApp.</p>";
     if (scheduleContainer) scheduleContainer.innerHTML = "";
     return;
   }
 
-  const todayYMD = getTodayYMD();
-  const startDate = buildLocalDateFromYMD(todayYMD);
+  const todayYMD = getTodayYmd();
+  const startDate = buildLocalDateFromYmd(todayYMD);
   const endDate = new Date(startDate);
   endDate.setDate(endDate.getDate() + 13);
 
-  const diasUnicos = [...new Set(disponibilidad.map((d) => formatDate(d.fecha)).filter(Boolean))]
-    .map((dia) => ({ dia, date: buildLocalDateFromYMD(dia) }))
+  const uniqueDays = [
+    ...new Set(
+      availability.map((item) => formatDate(item.fecha)).filter(Boolean),
+    ),
+  ]
+    .map((day) => ({ day, date: buildLocalDateFromYmd(day) }))
     .filter(({ date }) => date >= startDate && date <= endDate)
     .sort((a, b) => a.date - b.date)
-    .map(({ dia }) => dia);
+    .map(({ day }) => day);
 
-  if (!diasUnicos.length) {
-    calendarContainer.innerHTML = "<p>No hay días disponibles en los próximos 14 días</p>";
+  if (!uniqueDays.length) {
+    calendarContainer.innerHTML =
+      "<p>No hay días disponibles en los próximos 14 días</p>";
     if (scheduleContainer) scheduleContainer.innerHTML = "";
     return;
   }
 
-  if (!selectedDay || !diasUnicos.includes(selectedDay)) {
-    selectedDay = diasUnicos[0];
+  if (!selectedDay || !uniqueDays.includes(selectedDay)) {
+    selectedDay = uniqueDays[0];
   }
 
-  calendarContainer.innerHTML = diasUnicos
-    .map((dia) => {
-      const dateObj = buildLocalDateFromYMD(dia);
+  calendarContainer.innerHTML = uniqueDays
+    .map((day) => {
+      const dateObj = buildLocalDateFromYmd(day);
       const weekday = dateObj.toLocaleDateString("es-UY", { weekday: "short" });
       const dayNum = String(dateObj.getDate()).padStart(2, "0");
       const month = dateObj.toLocaleDateString("es-UY", { month: "short" });
-      const activeClass = dia === selectedDay ? " active" : "";
+      const activeClass = day === selectedDay ? " active" : "";
 
       return `
-      <button class="calendar-day${activeClass}" onclick="seleccionarDia('${dia}')">
+      <button class="calendar-day${activeClass}" type="button" data-day="${day}">
         <div class="calendar-weekday">${weekday}</div>
         <div class="calendar-number">${dayNum}</div>
         <div class="calendar-month">${month}</div>
@@ -227,26 +263,17 @@ function renderDias() {
     })
     .join("");
 
-  renderDetalle(disponibilidad.filter((item) => formatDate(item.fecha) === selectedDay));
+  renderDetail(
+    availability.filter((item) => formatDate(item.fecha) === selectedDay),
+  );
 }
 
-/* =========================
-   CLICK DÍA
-========================= */
-function seleccionarDia(fecha) {
-  selectedDay = fecha;
-  renderDias();
+function buildWhatsAppLink(day, time, room) {
+  const text = `Hola, quiero consultar una reserva el ${formatDateDisplay(day)} a las ${time} en la sala ${room}.`;
+  return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
 }
 
-/* =========================
-   RENDER DETALLE
-========================= */
-function buildWhatsAppLink(dia, horario, sala) {
-  const text = `Hola, quiero consultar una reserva el ${formatDateDisplay(dia)} a las ${horario} en la sala ${sala}.`;
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
-}
-
-function renderDetalle(items) {
+function renderDetail(items) {
   if (!scheduleContainer) {
     console.error("No existe #schedule");
     return;
@@ -259,28 +286,27 @@ function renderDetalle(items) {
 
   scheduleContainer.innerHTML = items
     .map((item) => {
-      const horarioFormateado = formatHora(item.horario);
-      const libre = item.disponible === true || String(item.disponible).toLowerCase() === "true";
-      const disponibleButton = libre
-        ? `<a class="reserve-button" href="${escapeHtml(buildWhatsAppLink(selectedDay, horarioFormateado, item.sala))}" target="_blank" rel="noopener">Consultar</a>`
+      const formattedTime = formatTime(item.horario);
+      const isAvailable =
+        item.disponible === true ||
+        String(item.disponible).toLowerCase() === "true";
+      const action = isAvailable
+        ? `<a class="reserve-button" href="${escapeHtml(buildWhatsAppLink(selectedDay, formattedTime, item.sala))}" target="_blank" rel="noopener">Consultar</a>`
         : `<div class="slot-status occupied">Ocupada</div>`;
 
       return `
     <div class="schedule-slot">
       <div class="slot-info">
-        <div class="slot-time">${escapeHtml(horarioFormateado)}</div>
+        <div class="slot-time">${escapeHtml(formattedTime)}</div>
         <div class="occupied-label">Sala ${escapeHtml(item.sala)}</div>
       </div>
-      ${disponibleButton}
+      ${action}
     </div>
   `;
     })
     .join("");
 }
 
-/* =========================
-   FORMATO FECHA SEGURO
-========================= */
 function formatDate(fecha) {
   const canonical = AgendaModel.parseDate(fecha);
   if (canonical) return canonical;
@@ -294,10 +320,7 @@ function formatDate(fecha) {
   return `${y}-${m}-${day}`;
 }
 
-/* =========================
-   FORMATO HORA SEGURO
-========================= */
-function formatHora(hora) {
+function formatTime(hora) {
   const minutes = AgendaModel.parseTime(hora);
   if (minutes !== null) return AgendaModel.timeText(minutes);
   if (typeof hora === "string") {
@@ -323,16 +346,13 @@ function formatHora(hora) {
   });
 }
 
-/* =========================
-   ERROR UI
-========================= */
-function mostrarError(msg) {
+function showError(message) {
   const el = document.getElementById("error");
 
   if (el) {
-    el.innerText = msg;
+    el.innerText = message;
     el.style.display = "block";
   } else {
-    alert(msg);
+    alert(message);
   }
 }

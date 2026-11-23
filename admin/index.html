@@ -1,55 +1,194 @@
 <!doctype html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="robots" content="noindex,nofollow" />
-  <title>Agenda · El Desafinado</title>
-  <link rel="stylesheet" href="./style.css" />
-</head>
-<body>
-  <section id="access" class="access" hidden>
-    <a href="../" class="wordmark">EL DESAFINADO</a>
-    <div class="access-card">
-      <span class="eyebrow">ADMINISTRACIÓN</span>
-      <h1>La agenda de tu sala,<br>en un solo lugar.</h1>
-      <p>Consultá reservas, bandas y horarios desde tu cuenta de Google autorizada.</p>
-      <a id="login-link" class="button primary" hidden>Ingresar a la agenda privada</a>
-      <p id="setup-message" class="notice" hidden>El acceso privado todavía está pendiente de activación.</p>
-      <a href="?demo=1" class="text-link">Ver ejemplo de la agenda</a>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>Agenda · El Desafinado</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <section id="access" class="access" hidden>
+      <a href="../" class="wordmark">EL DESAFINADO</a>
+      <div class="access-card">
+        <span class="eyebrow">ADMINISTRACIÓN</span>
+        <h1>La agenda de tu sala,<br />en un solo lugar.</h1>
+        <p>
+          Consultá reservas, bandas y horarios desde tu cuenta de Google
+          autorizada.
+        </p>
+        <a id="login-link" class="button primary" hidden
+          >Ingresar a la agenda privada</a
+        >
+        <p id="setup-message" class="notice" hidden>
+          El acceso privado todavía está pendiente de activación.
+        </p>
+        <a href="?demo=1" class="text-link">Ver ejemplo de la agenda</a>
+      </div>
+      <a href="../" class="text-link">Volver al sitio</a>
+    </section>
+    <div id="dashboard" class="app-shell" hidden>
+      <aside class="sidebar">
+        <a class="identity" id="brand-link" href="../"
+          ><span class="brand-symbol" aria-hidden="true">D</span
+          ><span
+            ><strong id="brand-name">EL DESAFINADO</strong
+            ><small>SALA DE ENSAYO</small></span
+          ></a
+        >
+        <div class="sidebar-section">ESPACIO DE TRABAJO</div>
+        <div class="sidebar-current">Agenda de reservas</div>
+        <div class="mobile-links">
+          <a
+            id="sheet-link-mobile"
+            target="_blank"
+            rel="noopener noreferrer"
+            hidden
+            >Planilla</a
+          ><a id="public-link-mobile" href="../">Sitio</a>
+        </div>
+        <div class="sidebar-bottom">
+          <p>
+            Actualizá los turnos en tu planilla. Tu agenda reúne las reservas en
+            una vista más clara.
+          </p>
+          <a
+            id="sheet-link"
+            class="sidebar-link"
+            target="_blank"
+            rel="noopener noreferrer"
+            hidden
+            >Abrir planilla</a
+          ><a href="../" id="public-link" class="sidebar-link"
+            >Ver sitio público</a
+          ><small>Un espacio desarrollado por Nano</small>
+        </div>
+      </aside>
+      <main class="workspace">
+        <div id="demo-banner" class="demo-banner" hidden>
+          Vista de ejemplo · Las reservas que ves son ficticias.
+        </div>
+        <header class="page-heading">
+          <div>
+            <span class="eyebrow">ADMINISTRACIÓN</span>
+            <h1>Tu agenda</h1>
+            <p>Las reservas de la sala, claras y a mano.</p>
+          </div>
+          <div class="sync">
+            <button id="refresh" class="button secondary" type="button">
+              Actualizar</button
+            ><span id="sync-time" role="status" aria-live="polite"></span>
+          </div>
+        </header>
+        <div id="error" class="notice error" role="alert" hidden></div>
+        <div id="warnings" class="notice" role="status" hidden></div>
+        <section class="summary" aria-label="Resumen de la semana">
+          <div>
+            <span>Reservas de la semana</span><strong id="count">—</strong>
+          </div>
+          <div><span>Horas reservadas</span><strong id="hours">—</strong></div>
+          <div>
+            <span>Salas con reservas</span><strong id="rooms-count">—</strong>
+          </div>
+          <div>
+            <span>Próximo ensayo</span
+            ><strong id="next-booking" class="next-label">—</strong>
+          </div>
+        </section>
+        <section class="calendar-card" aria-label="Calendario de reservas">
+          <div class="calendar-toolbar">
+            <div class="period">
+              <h2 id="period-title"></h2>
+              <div class="date-navigation">
+                <button
+                  class="button small secondary"
+                  id="previous"
+                  type="button"
+                >
+                  Anterior</button
+                ><button
+                  class="button small secondary"
+                  id="today"
+                  type="button"
+                >
+                  Hoy</button
+                ><button class="button small secondary" id="next" type="button">
+                  Siguiente
+                </button>
+              </div>
+            </div>
+            <div
+              class="view-switch"
+              role="group"
+              aria-label="Vista de la agenda"
+            >
+              <button data-view="week" type="button" aria-pressed="true">
+                Semana</button
+              ><button data-view="month" type="button" aria-pressed="false">
+                Mes</button
+              ><button data-view="list" type="button" aria-pressed="false">
+                Lista
+              </button>
+            </div>
+          </div>
+          <div class="filters">
+            <label
+              >Sala<select id="room-filter">
+                <option value="">Todas las salas</option>
+              </select></label
+            ><label
+              >Estado<select id="status-filter">
+                <option value="active">Activas</option>
+                <option value="all">Todos</option>
+                <option value="reservada">Reservadas</option>
+                <option value="pendiente">Pendientes</option>
+                <option value="cancelada">Canceladas</option>
+              </select></label
+            ><label class="search-field"
+              >Buscar banda<input
+                id="search"
+                type="search"
+                placeholder="Nombre de la banda"
+                autocomplete="off"
+            /></label>
+          </div>
+          <div id="calendar" aria-live="polite" aria-busy="false"></div>
+          <div class="calendar-footer">
+            <span id="result-count"></span
+            ><span id="sheet-footer-note"
+              >Los turnos se editan desde Google Sheets.</span
+            ><a
+              id="sheet-footer-link"
+              class="sheet-footer-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              hidden
+              >Los turnos se editan desde Google Sheets.</a
+            >
+          </div>
+        </section>
+      </main>
     </div>
-    <a href="../" class="text-link">Volver al sitio</a>
-  </section>
-  <div id="dashboard" class="app-shell" hidden>
-    <aside class="sidebar">
-      <a class="identity" id="brand-link" href="../"><span class="brand-symbol" aria-hidden="true">D</span><span><strong id="brand-name">EL DESAFINADO</strong><small>SALA DE ENSAYO</small></span></a>
-      <div class="sidebar-section">ESPACIO DE TRABAJO</div>
-      <div class="sidebar-current">Agenda de reservas</div>
-      <div class="mobile-links"><a id="sheet-link-mobile" target="_blank" rel="noopener noreferrer" hidden>Planilla</a><a id="public-link-mobile" href="../">Sitio</a></div>
-      <div class="sidebar-bottom"><p>Actualizá los turnos en tu planilla. Tu agenda reúne las reservas en una vista más clara.</p><a id="sheet-link" class="sidebar-link" target="_blank" rel="noopener noreferrer" hidden>Abrir planilla</a><a href="../" id="public-link" class="sidebar-link">Ver sitio público</a><small>Un espacio desarrollado por Nano</small></div>
-    </aside>
-    <main class="workspace">
-      <div id="demo-banner" class="demo-banner" hidden>Vista de ejemplo · Las reservas que ves son ficticias.</div>
-      <header class="page-heading"><div><span class="eyebrow">ADMINISTRACIÓN</span><h1>Tu agenda</h1><p>Las reservas de la sala, claras y a mano.</p></div><div class="sync"><button id="refresh" class="button secondary" type="button">Actualizar</button><span id="sync-time" role="status" aria-live="polite"></span></div></header>
-      <div id="error" class="notice error" role="alert" hidden></div>
-      <div id="warnings" class="notice" role="status" hidden></div>
-      <section class="summary" aria-label="Resumen de la semana">
-        <div><span>Reservas de la semana</span><strong id="count">—</strong></div>
-        <div><span>Horas reservadas</span><strong id="hours">—</strong></div>
-        <div><span>Salas con reservas</span><strong id="rooms-count">—</strong></div>
-        <div><span>Próximo ensayo</span><strong id="next-booking" class="next-label">—</strong></div>
-      </section>
-      <section class="calendar-card" aria-label="Calendario de reservas">
-        <div class="calendar-toolbar"><div class="period"><h2 id="period-title"></h2><div class="date-navigation"><button class="button small secondary" id="previous" type="button">Anterior</button><button class="button small secondary" id="today" type="button">Hoy</button><button class="button small secondary" id="next" type="button">Siguiente</button></div></div><div class="view-switch" role="group" aria-label="Vista de la agenda"><button data-view="week" type="button" aria-pressed="true">Semana</button><button data-view="month" type="button" aria-pressed="false">Mes</button><button data-view="list" type="button" aria-pressed="false">Lista</button></div></div>
-        <div class="filters"><label>Sala<select id="room-filter"><option value="">Todas las salas</option></select></label><label>Estado<select id="status-filter"><option value="active">Activas</option><option value="all">Todos</option><option value="reservada">Reservadas</option><option value="pendiente">Pendientes</option><option value="cancelada">Canceladas</option></select></label><label class="search-field">Buscar banda<input id="search" type="search" placeholder="Nombre de la banda" autocomplete="off" /></label></div>
-        <div id="calendar" aria-live="polite" aria-busy="false"></div>
-        <div class="calendar-footer"><span id="result-count"></span><span id="sheet-footer-note">Los turnos se editan desde Google Sheets.</span><a id="sheet-footer-link" class="sheet-footer-link" target="_blank" rel="noopener noreferrer" hidden>Los turnos se editan desde Google Sheets.</a></div>
-      </section>
-    </main>
-  </div>
-  <dialog id="booking-dialog" aria-labelledby="booking-title"><div class="dialog-heading"><span class="eyebrow">DETALLE DE RESERVA</span><button id="close-dialog" class="button small secondary" type="button">Cerrar</button></div><h2 id="booking-title"></h2><dl id="booking-detail"></dl><a id="booking-row" class="button primary" target="_blank" rel="noopener noreferrer" hidden>Ver en la planilla</a></dialog>
-  <script src="../script/config.js?v=20261122-demo"></script>
-  <script src="./model.js"></script>
-  <script src="./app.js?v=20261122-demo"></script>
-</body>
+    <dialog id="booking-dialog" aria-labelledby="booking-title">
+      <div class="dialog-heading">
+        <span class="eyebrow">DETALLE DE RESERVA</span
+        ><button id="close-dialog" class="button small secondary" type="button">
+          Cerrar
+        </button>
+      </div>
+      <h2 id="booking-title"></h2>
+      <dl id="booking-detail"></dl>
+      <a
+        id="booking-row"
+        class="button primary"
+        target="_blank"
+        rel="noopener noreferrer"
+        hidden
+        >Ver en la planilla</a
+      >
+    </dialog>
+    <script src="../script/config.js?v=20261122-demo"></script>
+    <script src="./model.js"></script>
+    <script src="./app.js?v=20261122-demo"></script>
+  </body>
 </html>

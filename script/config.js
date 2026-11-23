@@ -1,12 +1,15 @@
-/* Este sitio es una demostración pública con una planilla ficticia independiente. */
+// Configuración pública para la demostración con una planilla ficticia independiente.
 window.SALA_CONFIG = Object.freeze({
   name: "El Desafinado",
   primary: "#ff6b35",
   demoMode: true,
-  publicApiUrl: "https://script.google.com/macros/s/AKfycbxkkIE9fw6BPbTj3u13Eeu0hjiHwDn27Y1qefAxuR8MxqEV708Ikhp5ifCP4N2-wG6OAg/exec?demo=1",
-  demoApiUrl: "https://script.google.com/macros/s/AKfycbxkkIE9fw6BPbTj3u13Eeu0hjiHwDn27Y1qefAxuR8MxqEV708Ikhp5ifCP4N2-wG6OAg/exec?demo=1&view=agenda",
+  publicApiUrl:
+    "https://script.google.com/macros/s/AKfycbxkkIE9fw6BPbTj3u13Eeu0hjiHwDn27Y1qefAxuR8MxqEV708Ikhp5ifCP4N2-wG6OAg/exec?demo=1",
+  demoApiUrl:
+    "https://script.google.com/macros/s/AKfycbxkkIE9fw6BPbTj3u13Eeu0hjiHwDn27Y1qefAxuR8MxqEV708Ikhp5ifCP4N2-wG6OAg/exec?demo=1&view=agenda",
   whatsapp: "59893767029",
-  adminUrl: "https://script.google.com/macros/s/AKfycbwtAWxXwgmz5A3QpzVuFnQpV6uwg1n_beiyhegkG5loBxQZaZiVs5Hp4wCh7vFZecxT/exec",
+  adminUrl:
+    "https://script.google.com/macros/s/AKfycbwtAWxXwgmz5A3QpzVuFnQpV6uwg1n_beiyhegkG5loBxQZaZiVs5Hp4wCh7vFZecxT/exec",
   timeZone: "America/Montevideo",
-  slotMinutes: 60
+  slotMinutes: 60,
 });
